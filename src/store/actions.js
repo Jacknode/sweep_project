@@ -38,5 +38,23 @@ export default {
           }
         })
     })
+  },
+  //登录
+  Login(store,data){
+    return new Promise(function (relove, reject) {
+      axios.post('http://wechat.1000da.com.cn/logon/Logon', data, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+      .then(data=>{
+        var data = data.data;
+        if(Number(data.resultcode)==200){
+          relove(data.list);
+        }else{
+          reject(data.resultcontent)
+        }
+      })
+    })
   }
 }

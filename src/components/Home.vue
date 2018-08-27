@@ -5,27 +5,75 @@
         <div class="logo"></div>
         <div class="inputBox">
           <div class="userName clearfix"><i></i>
-            <div><input type="text" placeholder="用户名"></div>
+            <div><input type="text" placeholder="用户名" v-model="options.userID"></div>
           </div>
           <div class="userPassworld clearfix"><i></i>
-            <div><input type="password" placeholder="密码"></div>
+            <div><input type="password" placeholder="密码" v-model="options.password"></div>
           </div>
         </div>
-        <a href="javascript:;">登录</a>
+        <a href="javascript:;" @click="login">登录</a>
       </div>
     </div>
+    <toast v-model="isWarn" type="warn">{{warnText}}</toast>
   </div>
 </template>
 <script>
   import {mapGetters} from 'vuex'
+  import {
+    Toast
+  } from 'vux'
 
   export default {
     name: '',
+    components:{
+      Toast
+    },
     data() {
-      return {}
+      return {
+        options: {
+          "userID": "",
+          "password": "",
+          "stationID": "",
+        },
+        isWarn:false,
+        warnText:'请输入账号!',
+        tradeInfo:{}
+      }
+    },
+    created(){
+      let tradeInfo =  JSON.parse(sessionStorage.getItem('tradeInfo'))
+      if(tradeInfo){
+        this.tradeInfo = tradeInfo;
+      }else{
+        this.isWarn = true;
+        this.warnText = '车站编码不能为空!'
+        return
+      }
     },
     computed: mapGetters([]),
-    methods: {},
+    methods: {
+      //登录
+      login(){
+        if(!this.options.userID){
+          this.isWarn = true;
+          return
+        }
+        if(!this.options.password){
+          this.isWarn = true;
+          this.warnText='请输入密码!'
+          return
+        }
+        this.options.stationID = this.tradeInfo.Sid
+        this.$store.dispatch('Login',this.options)
+        .then((list)=>{
+          sessionStorage.setItem('userInfo',JSON.stringify(list))
+          this.$router.push({path: '/sweep'})
+        },err=>{
+          this.isWarn = true;
+          this.warnText=err
+        })
+      }
+    },
   }
 </script>
 <style scoped>
@@ -95,7 +143,7 @@
     background: url("../assets/lo.png") no-repeat;
     -webkit-background-size: 100% 100%;
     background-size: 100% 100%;
-    margin-top:3px;
+    margin-top: 3px;
   }
 
   .userPassworld > div,
@@ -114,13 +162,13 @@
   a {
     font: 16px/3 "微软雅黑";
     width: 100%;
-    -webkit-border-radius:  24px;
-    -moz-border-radius:  24px;
-    border-radius:  24px;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 24px;
+    border-radius: 24px;
     background-color: #2269d4;
     color: #fff;
     text-align: center;
     display: block;
-    margin-top:50px;
+    margin-top: 50px;
   }
 </style>

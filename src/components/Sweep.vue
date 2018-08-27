@@ -43,6 +43,7 @@
     },
     data(){
       return {
+        tradeInfo:{},
         isWarn:false,
         isSuccess:false,
         warnText:'票号不能为空!',
@@ -71,7 +72,8 @@
           onButtonClick: (name) => {
             alert(`clicking ${name}`)
           }
-        }]
+        }],
+        userInfo:{}
       }
     },
     computed: mapGetters([
@@ -79,6 +81,24 @@
       'stationSource',
       'openID'
     ]),
+    created(){
+      let tradeInfo =  JSON.parse(sessionStorage.getItem('tradeInfo'))
+      let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+      if(userInfo){
+        this.userInfo = userInfo
+      }else{
+        this.isWarn = true;
+        this.warnText = '请重新登录!'
+        return
+      }
+      if(tradeInfo){
+        this.tradeInfo = tradeInfo;
+      }else{
+        this.isWarn = true;
+        this.warnText = '车站编码不能为空!'
+        return
+      }
+    },
     methods: {
 
       ManualCheckIn(){
@@ -92,7 +112,8 @@
           "ticketid": this.number,
           "openid": this.openID,
           "stationID": this.stationSource,
-          "checkUserID":this.userid
+          "checkUserID":this.userInfo.UserID,
+          checkUserName:this.userInfo.UserName
         };
         this.ManualCheckInLoading = true;
         this.$store.dispatch('initTicketDelivery',options)
@@ -150,7 +171,8 @@
                     "ticketid": result,
                     "openid": _this.openID,
                     "stationID": _this.stationSource,
-                    "checkUserID":_this.userid
+                    "checkUserID":_this.userInfo.UserID,
+                    checkUserName:_this.userInfo.UserName
                   };
                   //请求后端提交票号
                   _this.$store.dispatch('initTicketDelivery',deliveryOptions)
