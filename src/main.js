@@ -97,40 +97,40 @@ axios.post('http://wechat.1000da.com.cn/WeChatInfo/GetTradeAndStationInfo', {
     let relute = data.list;
     sessionStorage.setItem('tradeInfo',JSON.stringify(relute.tradeInfo))
     // router.push({path: '/sweep'})
-    if(!getQuery('code')){
-      let authParams = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${relute.tradeInfo.Appid}&redirect_uri=${encodeURIComponent(window.location.href)}&response_type=code&scope=snsapi_base#wechat_redirect`;
-
-      window.location.href = authParams
-    }else{
-      let code = getQuery('code');
-      sessionStorage.setItem('code',code);
-
-      axios.post('http://wechat.1000da.com.cn/WeChatInfo/GetOpenidFromCode', {
-        "userID": "qianke",
-        "password": "qianke123",
-        "code": code,
-        "stationID": STATIONSOURCE
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-      .then(data => {
-        var data = data.data;
-        if (Number(data.resultcode) == 200) {
-          sessionStorage.setItem('openID',data.list);
-          store.commit('initOpenid', data.list);
-          router.push({path: '/sweep'})
-        }
-        else {
-          router.push({path: '/sweep'})
-        }
-      })
-      .catch(() => {
-        router.push({path: '/'}) // ajax出现错误
-      })
-    }
-
+    // if(!getQuery('code')){
+    //   let authParams = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${relute.tradeInfo.Appid}&redirect_uri=${encodeURIComponent(window.location.href)}&response_type=code&scope=snsapi_base#wechat_redirect`;
+    //
+    //   window.location.href = authParams
+    // }else{
+    //   let code = getQuery('code');
+    //   sessionStorage.setItem('code',code);
+    //
+    //   axios.post('http://wechat.1000da.com.cn/WeChatInfo/GetOpenidFromCode', {
+    //     "userID": "qianke",
+    //     "password": "qianke123",
+    //     "code": code,
+    //     "stationID": STATIONSOURCE
+    //   }, {
+    //     headers: {
+    //       'Content-Type': 'application/x-www-form-urlencoded'
+    //     }
+    //   })
+    //   .then(data => {
+    //     var data = data.data;
+    //     if (Number(data.resultcode) == 200) {
+    //       sessionStorage.setItem('openID',data.list);
+    //       store.commit('initOpenid', data.list);
+    //       router.push({path: '/sweep'})
+    //     }
+    //     else {
+    //       router.push({path: '/sweep'})
+    //     }
+    //   })
+    //   .catch(() => {
+    //     router.push({path: '/'}) // ajax出现错误
+    //   })
+    // }
+    router.push({path: '/'})
     FastClick.attach(document.body);
 
     Vue.config.productionTip = false;
